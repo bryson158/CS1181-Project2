@@ -1,7 +1,7 @@
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.util.ArrayList;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Random;
 
 public class Main {
@@ -54,20 +54,32 @@ public class Main {
         JFrame gameFrame = new JFrame("Tic-Tac-Toe");
         JPanel gamePanel = new JPanel();
 
+        Random rng = new Random();
+
+
+        //Creates the player and computer objects and determines which of the two goes first
+        Computer computer = new Computer(rng.nextBoolean());
+        Player player = new Player();
+
         //Will close and exit the program if the x on the window is pressed
         gameFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        //Creates the labels for the 0's sets all of the labels to not visible
-        JButton button1 = new JButton();
-        for(int i = 0; i <= 5; i++){
+        Button buttons[][] = new Button[3][3];
 
-        }
-
-        //Creates a virtual grid to keep track of the players moved where
+        //Creates a virtual grid to keep track of the players moved where and adds all the buttons to the grid
         char[][] grid = new char[3][3];
         for(int i = 0; i <= 2; i++){
             for(int p = 0; p <= 2; p++){
                 grid[i][p] = 'e';
+                buttons[i][p] = new Button();
+                gamePanel.add(buttons[i][p]);
+                buttons[i][p].addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if(computer.isMove){
+                        }
+                    }
+                });
             }
         }
 
@@ -77,11 +89,6 @@ public class Main {
         gameFrame.setSize(600,600);
         gameFrame.setVisible(true);
 
-        Random rng = new Random();
-
-        //Creates the player and computer objects and determines which of the two goes first
-        Computer computer = new Computer(rng.nextBoolean());
-        Player player = new Player();
         if(computer.getFirstMove()){
             player.setFirstMove(false);
         }
@@ -98,12 +105,22 @@ public class Main {
         //Game loops
         while (!quit){
             while (!winner){
-                //If it is the computers move
-                if(computer.isMove()){
-                    computer.move(grid, rng);
-                }
-                else {
+                boolean moveFinished = false;
 
+                while (!moveFinished) {
+                    if (computer.isMove()) {
+                        int [] computerMove = computer.move(grid, rng);
+
+                        //Makes sure the move is legal
+                        if (legalMove(grid, computerMove)){
+                            updateButtons(grid, buttons);
+                            moveFinished = true;
+                        }
+                    }
+                    //Its the humans player
+                    else {
+
+                    }
                 }
             }
         }
@@ -123,8 +140,25 @@ public class Main {
     }
 
     //Checks that the move a user is trying to make is okay
-    public boolean legalMove(){
-        return true;
+    public static boolean legalMove(char[][] grid, int[] newMove){
+        if (grid[newMove[0]][newMove[1]] == 'e') {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
+    //Resets the board
+    public void resetBoard(char[][] grid, int[] newMove){
+        //TODO- finish this
+    }
+
+    public static void updateButtons(char[][] grid, Button buttons[][]){
+        for(int i = 0; i<3; i++){
+            for(int p = 0; p<3; p++){
+                buttons[i][p].setImaIcon(grid);
+            }
+        }
+    }
 }
