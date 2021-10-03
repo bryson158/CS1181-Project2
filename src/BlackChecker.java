@@ -1,0 +1,2 @@
+public class BlackChecker {
+}
